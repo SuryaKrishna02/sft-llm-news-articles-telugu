@@ -1,18 +1,17 @@
-const LINKS_SCRAPER_INFO = [
+process.on('uncaughtException', (err) => {
+    console.error('Uncaught Exception:', err);
+    process.exit(1); // Exit the process with a non-zero status code
+  });
+
+export const LINKS_SCRAPER_INFO = [
     {
-        "name": "telengana",
-        "base_url": "https://telugu.suryaa.com/telangana-latest.php?pagination=",
+        "name": "sports",
+        "base_url": "https://telugu.suryaa.com/breaking-sports-news-headlines.php?pagination=",
     },
     {
-        "name": "andhrapradesh",
-        "base_url": "https://telugu.suryaa.com/andhrapradesh-latest.php?pagination="
+        "name": "technology",
+        "base_url": "https://telugu.suryaa.com/latest-technology-news.php?pagination="
     }
 ];
-const LINKS_SCRAPER_MINOR_TIMEOUT = [1, 2, 3]
-const LINKS_SCRAPER_MAJOR_TIMEOUT = [1*60, 2*60, 3*60]
-
-module.exports = {
-  LINKS_SCRAPER_INFO,
-  LINKS_SCRAPER_MAJOR_TIMEOUT,
-  LINKS_SCRAPER_MINOR_TIMEOUT
-};
+export const LINKS_SCRAPER_TIMEOUT = [1, 2, 3] // In Seconds
+export const generateOutputFilePath = (itemName) => `../data/links/${itemName}_links.txt`;
