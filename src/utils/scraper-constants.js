@@ -15,3 +15,8 @@ export const LINKS_SCRAPER_INFO = [
 ];
 export const LINKS_SCRAPER_TIMEOUT = [1, 2, 3] // In Seconds
 export const generateOutputFilePath = (itemName) => `../data/links/${itemName}_links.txt`;
+export const COMBINED_LINKS_FILE_NAME = "combined"
+
+export const CONTENT_SCRAPER_MAJOR_TIMEOUT = [1*60, 2*60, 3*60] // In Seconds
+export const CONTENT_SCRAPER_MINOR_TIMEOUT = [1, 5, 10] // In Seconds
+// export const 

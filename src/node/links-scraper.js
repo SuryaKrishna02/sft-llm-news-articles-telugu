@@ -2,7 +2,12 @@ import axios from 'axios';
 import cheerio from 'cheerio';
 import fs from 'fs/promises';
 import path from 'path';
-import { LINKS_SCRAPER_INFO , LINKS_SCRAPER_TIMEOUT, generateOutputFilePath} from '../../src/utils/scraper-constants.js';
+import { 
+  LINKS_SCRAPER_INFO , 
+  LINKS_SCRAPER_TIMEOUT, 
+  generateOutputFilePath,
+  COMBINED_LINKS_FILE_NAME
+} from '../../src/utils/scraper-constants.js';
 
 async function timeout() {
     const randomSeconds = LINKS_SCRAPER_TIMEOUT; // Possible random timeout values in seconds
@@ -11,6 +16,23 @@ async function timeout() {
     console.log(`Waiting for ${timeout/1000} seconds...`);
     await new Promise(resolve => setTimeout(resolve, timeout));
   };
+
+async function writeToFile(filePath, content){
+  const outputDirectory = path.dirname(filePath);
+  try {
+    await fs.access(outputDirectory);
+  } catch (error) {
+    // Directory doesn't exist, so create it
+    await fs.mkdir(outputDirectory, { recursive: true });
+  }
+
+  try{
+    await fs.writeFile(filePath, content.join('\n'));
+    console.log(`${content.length} Scraped links saved to ${filePath}.`);
+  } catch(err){
+    console.error('Error writing to file:', err);
+  }
+}
 
 async function scrapePage(base_url, pageNumber, scrapedLinks) {
   const url = `${base_url}${pageNumber}`;
@@ -41,34 +63,30 @@ async function scrapePage(base_url, pageNumber, scrapedLinks) {
 }
 
 async function startLinksScraping() {
-    LINKS_SCRAPER_INFO.forEach(async item => {
-        const BASE_URL = item.base_url;
-        let page = 1;
-        let continueScraping = true;
-        let scrapedLinks = [];
-        while (continueScraping) {
-            continueScraping = await scrapePage(BASE_URL, page, scrapedLinks);
-            page++;
-            if (page == 3) break
-            await timeout();
-        }
-        const outputFilePath = generateOutputFilePath(item.name);
-        const outputDirectory = path.dirname(outputFilePath);
-        try {
-          await fs.access(outputDirectory);
-        } catch (error) {
-          // Directory doesn't exist, so create it
-          await fs.mkdir(outputDirectory, { recursive: true });
-        }
-        
-        try{
-          await fs.writeFile(outputFilePath, scrapedLinks.join('\n'));
-          console.log(`${scrapedLinks.length} Scraped links saved to ${outputFilePath}.`);
-        } catch(err){
-          console.error('Error writing to file:', err);
-        }
-    });
+    let allLinks = []
+    const promises = LINKS_SCRAPER_INFO.map(async (item) => {
+      const BASE_URL = item.base_url;
+      let page = 1;
+      let continueScraping = true;
+      let scrapedLinks = [];
+  
+      while (continueScraping) {
+        continueScraping = await scrapePage(BASE_URL, page, scrapedLinks);
+        page++;
 
+        if (page == 3) break;         // Remove this piece of code after testing
+        await timeout();
+      }
+  
+      const outputFilePath = generateOutputFilePath(item.name);
+      await writeToFile(outputFilePath, scrapedLinks);
+      allLinks.push(...scrapedLinks);
+    });
+  
+    await Promise.all(promises);
+    
+    const outputLinksFilePath = generateOutputFilePath(COMBINED_LINKS_FILE_NAME)
+    await writeToFile(outputLinksFilePath, allLinks)
 }
 
 startLinksScraping();
