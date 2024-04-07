@@ -1,7 +1,7 @@
-import axios from 'axios';
-import cheerio from 'cheerio';
-import fs from 'fs/promises';
 import path from 'path';
+import axios from 'axios';
+import fs from 'fs/promises';
+import cheerio from 'cheerio';
 import { 
   LINKS_SCRAPER_INFO , 
   LINKS_SCRAPER_TIMEOUT, 
@@ -62,7 +62,7 @@ async function scrapePage(base_url, pageNumber, scrapedLinks) {
   }
 }
 
-async function startLinksScraping() {
+export default async function LinksScraper() {
     let allLinks = []
     const promises = LINKS_SCRAPER_INFO.map(async (item) => {
       const BASE_URL = item.base_url;
@@ -86,7 +86,5 @@ async function startLinksScraping() {
     await Promise.all(promises);
     
     const outputLinksFilePath = generateOutputFilePath(COMBINED_LINKS_FILE_NAME)
-    await writeToFile(outputLinksFilePath, allLinks)
+    await writeToFile(outputLinksFilePath, Array.from(new Set(allLinks)))
 }
-
-startLinksScraping();
