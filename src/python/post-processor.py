@@ -16,7 +16,7 @@ def check_empty_content_title(df: pd.DataFrame) -> Tuple[list[str], list[str], l
     print("Total Empty Title or Content", len(empty_title_or_content))
     return empty_title_content, only_empty_content, only_empty_title, empty_title_content
 
-def remove_bad_titles_articles(df: pd.DataFrame) -> pd.DataFrame:
+def clean_scraped_df(df: pd.DataFrame) -> pd.DataFrame:
     cleaned_df = df.copy()
     cleaned_df = cleaned_df[~cleaned_df['title'].str.contains('|'.join(INVALID_TITLE_WORDS))]
 
