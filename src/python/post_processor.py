@@ -1,7 +1,7 @@
 import pandas as pd
 from typing import Tuple
+from src.python.template import PromptGenerator
 from src.utils.post_processing_constants import INVALID_TITLE_WORDS, CHARACTERS_TO_REMOVE
-
 
 def check_empty_content_title(df: pd.DataFrame) -> Tuple[list[str], list[str], list[str], list[str]]:
     empty_title_content = list(df[(df["total_content_char"] == 0) & (df["total_title_char"] == 0)]["url"])
@@ -38,3 +38,19 @@ def clean_scraped_df(df: pd.DataFrame) -> pd.DataFrame:
     cleaned_df['content'] = cleaned_df['content'].str.replace('\.{2,}', '.', regex=True)
 
     return cleaned_df
+
+def create_sft_dataset(shuffled_df):
+    """Creates a dataset with prompts and completions."""
+    prompt_generator = PromptGenerator()
+
+    type1_df = pd.DataFrame()
+    type2_df = pd.DataFrame()
+
+    type1_df["inputs"] = shuffled_df["content"].apply(prompt_generator.generate_prompt_type1)
+    type1_df["targets"] = shuffled_df["title"].apply(prompt_generator.generate_completion_type1)
+
+    type2_df["inputs"] = shuffled_df["title"].apply(prompt_generator.generate_prompt_type2)
+    type2_df["targets"] = shuffled_df["content"].apply(prompt_generator.generate_completion_type2)
+
+    concatenated_df = pd.concat([type1_df, type2_df], axis=0, ignore_index=True)
+    return concatenated_df
