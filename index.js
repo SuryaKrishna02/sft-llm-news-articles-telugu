@@ -1,10 +1,10 @@
-import linksScraper from './src/node/links-scraper'
-import contentBatchScraper from './src/node/content-scraper'
-import combineFiles from './src/node/combine-files'
+import linksScraper from './src/node/links-scraper.js'
+import contentBatchScraper from './src/node/content-scraper.js'
+import combineFiles from './src/node/combine-files.js'
 import {
   RUN_CONTENT_SCRAPER,
   RUN_LINKS_SCRAPER
-} from './src/utils/scraper-constants'
+} from './src/utils/scraper-constants.js'
 
 if (RUN_LINKS_SCRAPER && RUN_CONTENT_SCRAPER){
   linksScraper()

@@ -1,7 +1,15 @@
 import pandas as pd
 from typing import Tuple
-from src.python.template import PromptGenerator
-from src.utils.post_processing_constants import INVALID_TITLE_WORDS, CHARACTERS_TO_REMOVE
+from dataclasses import dataclass
+from src.utils.sft_constants import INVALID_TITLE_WORDS, CHARACTERS_TO_REMOVE
+
+@dataclass
+class OutlierWordThreshold:
+    min_title_length: int
+    max_title_length: int
+    min_content_length: int
+    max_content_length: int
+
 
 def check_empty_content_title(df: pd.DataFrame) -> Tuple[list[str], list[str], list[str], list[str]]:
     empty_title_content = list(df[(df["total_content_char"] == 0) & (df["total_title_char"] == 0)]["url"])
@@ -37,20 +45,19 @@ def clean_scraped_df(df: pd.DataFrame) -> pd.DataFrame:
     # 4. If there are more than 1 consecutive period, make it one period (Content)
     cleaned_df['content'] = cleaned_df['content'].str.replace('\.{2,}', '.', regex=True)
 
+    # Calculate the total number of characters
+    cleaned_df['total_title_char'] = cleaned_df['title'].str.len()
+    cleaned_df['total_content_char'] = cleaned_df['content'].str.len()
+
+    # Calculate the number of words
+    cleaned_df['total_title_words'] = cleaned_df['title'].str.split().str.len()
+    cleaned_df['total_content_words'] = cleaned_df['content'].str.split().str.len()
+
     return cleaned_df
 
-def create_sft_dataset(shuffled_df):
-    """Creates a dataset with prompts and completions."""
-    prompt_generator = PromptGenerator()
-
-    type1_df = pd.DataFrame()
-    type2_df = pd.DataFrame()
-
-    type1_df["inputs"] = shuffled_df["content"].apply(prompt_generator.generate_prompt_type1)
-    type1_df["targets"] = shuffled_df["title"].apply(prompt_generator.generate_completion_type1)
-
-    type2_df["inputs"] = shuffled_df["title"].apply(prompt_generator.generate_prompt_type2)
-    type2_df["targets"] = shuffled_df["content"].apply(prompt_generator.generate_completion_type2)
-
-    concatenated_df = pd.concat([type1_df, type2_df], axis=0, ignore_index=True)
-    return concatenated_df
+def remove_outliers(df:pd.DataFrame, threshold: OutlierWordThreshold) -> pd.DataFrame:
+    filtered_df = df[(df['total_title_words'] >= threshold.min_title_length) & 
+                    (df['total_title_words'] <= threshold.max_title_length) & 
+                    (df['total_content_words'] >= threshold.min_content_length) & 
+                    (df['total_content_words'] <= threshold.max_content_length)]
+    return filtered_df

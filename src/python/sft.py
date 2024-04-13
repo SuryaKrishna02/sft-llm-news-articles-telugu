@@ -1,6 +1,7 @@
 import random 
+import pandas as pd
 
-class PromptGenerator:
+class DatasetGenerator:
     """
     Generates prompts and completions for news articles data.
     Type 1 Headline Generation
@@ -61,3 +62,18 @@ class PromptGenerator:
     def generate_completion_type2(self, article):
         """Generates a completion for type2 data."""
         return article
+    
+    def create_dataset(self, shuffled_df: pd.DataFrame) -> pd.DataFrame:
+        """Creates a dataset with prompts and completions."""
+
+        type1_df = pd.DataFrame()
+        type2_df = pd.DataFrame()
+
+        type1_df["inputs"] = shuffled_df["content"].apply(self.generate_prompt_type1)
+        type1_df["targets"] = shuffled_df["title"].apply(self.generate_completion_type1)
+
+        type2_df["inputs"] = shuffled_df["title"].apply(self.generate_prompt_type2)
+        type2_df["targets"] = shuffled_df["content"].apply(self.generate_completion_type2)
+
+        concatenated_df = pd.concat([type1_df, type2_df], axis=0, ignore_index=True)
+        return concatenated_df

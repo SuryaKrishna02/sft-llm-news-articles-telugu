@@ -1,2 +1,4 @@
 node_modules/
 telugu-articles/
+__pycache__/
+.ipynb_checkpoints/
