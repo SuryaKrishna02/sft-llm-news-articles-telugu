@@ -6,12 +6,49 @@ process.on('uncaughtException', (err) => {
 export const RUN_LINKS_SCRAPER = true
 export const LINKS_SCRAPER_INFO = [
     {
+        "name": "ap",
+        "base_url": "https://telugu.suryaa.com/andhrapradesh-latest.php?pagination="
+    },
+    {
+        "name": "business",
+        "base_url": "https://telugu.suryaa.com/business-news-stock-markets.php?pagination="
+
+    },
+    {
+        "name": "devotion",
+        "base_url": "https://telugu.suryaa.com/devotion-bhakthi.php?pagination="
+    },
+    {
+        "name": "education",
+        "base_url": "https://telugu.suryaa.com/education-and-career-news.php?pagination="
+    },
+    {
+        "name": "health_beauty",
+        "base_url": "https://telugu.suryaa.com/health-and-beauty-news.php?pagination="
+    },
+    {
+        "name": "international",
+        "base_url": "https://telugu.suryaa.com/international-news-in-telugu.php?pagination="
+    },
+    {
+        "name": "life_style",
+        "base_url": "https://telugu.suryaa.com/latest-life-style-news-updates.php?pagination="
+    },
+    {
+        "name": "national",
+        "base_url": "https://telugu.suryaa.com/national-news-in-telugu.php?pagination="
+    },
+    {
         "name": "sports",
         "base_url": "https://telugu.suryaa.com/breaking-sports-news-headlines.php?pagination=",
     },
     {
         "name": "technology",
         "base_url": "https://telugu.suryaa.com/latest-technology-news.php?pagination="
+    },
+    {
+        "name": "telengana",
+        "base_url": "https://telugu.suryaa.com/telangana-latest.php?pagination="
     }
 ];
 export const LINKS_SCRAPER_TIMEOUT = [1, 2, 3] // In Seconds
