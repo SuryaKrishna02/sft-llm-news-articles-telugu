@@ -1,5 +1,6 @@
 import random 
 import pandas as pd
+from tqdm import tqdm
 
 class DatasetGenerator:
     """
@@ -63,19 +64,25 @@ class DatasetGenerator:
     def generate_completion_type2(self, article):
         """Generates a completion for type2 data."""
         return article
-    
-    def create_dataset(self, shuffled_df: pd.DataFrame) -> pd.DataFrame:
-        """Creates a dataset with prompts and completions."""
 
+    def create_dataset(self, df: pd.DataFrame) -> pd.DataFrame:
+        """Creates a dataset with prompts and completions."""
         type1_df = pd.DataFrame()
         type2_df = pd.DataFrame()
 
-        type1_df["inputs"] = shuffled_df["content"].apply(self.generate_prompt_type1)
-        type1_df["targets"] = shuffled_df["title"].apply(self.generate_completion_type1)
+        with tqdm(total=4, unit="step") as progress_bar:
+            type1_df["inputs"] = df["content"].apply(self.generate_prompt_type1)
+            progress_bar.update(1)
 
-        type2_df["inputs"] = shuffled_df["title"].apply(self.generate_prompt_type2)
-        type2_df["targets"] = shuffled_df["content"].apply(self.generate_completion_type2)
+            type1_df["targets"] = df["title"].apply(self.generate_completion_type1)
+            progress_bar.update(1)
+
+            type2_df["inputs"] = df["title"].apply(self.generate_prompt_type2)
+            progress_bar.update(1)
+
+            type2_df["targets"] = df["content"].apply(self.generate_completion_type2)
+            progress_bar.update(1)
 
         concatenated_df = pd.concat([type1_df, type2_df], axis=0, ignore_index=True)
-        shuffled_df = concatenated_df.sample(frac=1.0, random_state=self.random_state).reset_index(drop=True)
-        return shuffled_df
+        sft_df = concatenated_df.sample(frac=1.0, random_state=self.random_state).reset_index(drop=True)
+        return sft_df
