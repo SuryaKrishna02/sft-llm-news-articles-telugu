@@ -22,7 +22,8 @@ class DatasetGenerator:
     {{article}}
     """
 
-    def __init__(self):
+    def __init__(self, random_state:int=442):
+        self.random_state = random_state
         self.random_word = lambda word_list: random.choice(word_list)
         self.news_article_type1_options = ["వార్తా కథనానికి", "న్యూస్ ఆర్టికల్ కి", "న్యూస్ కథనానికి"]
         self.news_article_type2_options = ["వార్తా కథనాన్ని", "న్యూస్ ఆర్టికల్ ని", "న్యూస్ కథనాన్ని"]
@@ -76,4 +77,5 @@ class DatasetGenerator:
         type2_df["targets"] = shuffled_df["content"].apply(self.generate_completion_type2)
 
         concatenated_df = pd.concat([type1_df, type2_df], axis=0, ignore_index=True)
-        return concatenated_df
+        shuffled_df = concatenated_df.sample(frac=1.0, random_state=self.random_state).reset_index(drop=True)
+        return shuffled_df
