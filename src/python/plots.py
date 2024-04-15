@@ -6,18 +6,37 @@ from dataclasses import dataclass
 
 @dataclass
 class QuantileInfo:
+    """
+    A data class that holds information about a quantile.
+
+    Attributes:
+        threshold (float): The threshold value for the quantile.
+        label_frequency (Optional[int], optional): The frequency at which labels should be displayed on the x-axis. Defaults to 5.
+        label_rotation (Optional[int], optional): The rotation angle (in degrees) for the x-axis labels. Defaults to 45.
+    """
     threshold: float
-    label_frequency: Optional[int]=5
-    label_rotation: Optional[int]=45
+    label_frequency: Optional[int] = 5
+    label_rotation: Optional[int] = 45
 
 snake_to_title_case = lambda string: string.replace('_', ' ').title()
 
 def histogram(df: pd.DataFrame, column: str):
+    """
+    Generates a histogram plot for a given column in a pandas DataFrame.
+
+    Args:
+        df (pd.DataFrame): The input pandas DataFrame.
+        column (str): The name of the column to create the histogram for.
+
+    Returns:
+        None
+    """
     snake_case_column = snake_to_title_case(column)
     # Get the minimum and maximum values of the column
     min_value = df[column].min()
     max_value = df[column].max()
 
+    # Determine the number of bins for the histogram
     if max_value <= 250:
         no_of_bins = int(max_value)
     else:
@@ -36,20 +55,31 @@ def histogram(df: pd.DataFrame, column: str):
 
     # Add the text box to the plot
     props = dict(boxstyle='round', facecolor='white', alpha=0.5)
-    plt.text(0.95, 0.95, textstr, transform=plt.gca().transAxes, fontsize=12,
-            verticalalignment='top', horizontalalignment='right', bbox=props)
+    plt.text(0.95, 0.95, textstr, transform=plt.gca().transAxes, fontsize=12, verticalalignment='top', horizontalalignment='right', bbox=props)
 
     # Add labels and title
     plt.xlabel(snake_case_column)
     plt.ylabel('Frequency')
     plt.title(f'Histogram of {snake_case_column}')
-
     plt.tight_layout()
     plt.show()
 
 
 def left_right_tail(df: pd.DataFrame, column: str, left_quantile: QuantileInfo, right_quantile: QuantileInfo):
+    """
+    Generates a side-by-side plot showing the frequency distribution of the left and right tails of a column in a pandas DataFrame.
+
+    Args:
+        df (pd.DataFrame): The input pandas DataFrame.
+        column (str): The name of the column to analyze.
+        left_quantile (QuantileInfo): A dataclass containing information about the left tail, including the threshold and label frequency/rotation.
+        right_quantile (QuantileInfo): A dataclass containing information about the right tail, including the threshold and label frequency/rotation.
+
+    Returns:
+        None
+    """
     snake_case_column = snake_to_title_case(column)
+
     # Calculate percentiles for left and right tails
     left_cutoff = df[column].quantile(left_quantile.threshold)
     right_cutoff = df[column].quantile(right_quantile.threshold)
@@ -64,8 +94,8 @@ def left_right_tail(df: pd.DataFrame, column: str, left_quantile: QuantileInfo, 
         left_x_frequency = left_quantile.label_frequency
     else:
         left_x_frequency = 5
-    left_ticks = left_x[::left_x_frequency]  # Display every 5th tick
-    left_labels = [str(int(x)) for x in left_counts.index[::left_x_frequency]]  # Display every 5th label
+    left_ticks = left_x[::left_x_frequency]
+    left_labels = [str(int(x)) for x in left_counts.index[::left_x_frequency]]
     axes[0].bar(left_x, left_counts, color='#86bf91')
     axes[0].set_title('Left Tail')
     axes[0].set_xlabel(snake_case_column)
@@ -80,8 +110,8 @@ def left_right_tail(df: pd.DataFrame, column: str, left_quantile: QuantileInfo, 
         right_x_frequency = right_quantile.label_frequency
     else:
         right_x_frequency = 5
-    right_ticks = right_x[::right_x_frequency]  # Display every 5th tick
-    right_labels = [str(int(x)) for x in right_counts.index[::right_x_frequency]]  # Display every 5th label
+    right_ticks = right_x[::right_x_frequency]
+    right_labels = [str(int(x)) for x in right_counts.index[::right_x_frequency]]
     axes[1].bar(right_x, right_counts, color='#007acc')
     axes[1].set_title('Right Tail')
     axes[1].set_xlabel(snake_case_column)
