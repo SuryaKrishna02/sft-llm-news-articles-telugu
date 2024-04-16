@@ -147,7 +147,7 @@ When contributing, please follow the existing code style and conventions used in
 
 ## License
 
-This project is licensed under the [MIT License](LICENSE).
+This code is licensed under the [MIT License](LICENSE).
 
 ## Citation
 If you use this code in your work, please cite it as follows:
