@@ -17,6 +17,7 @@ The repository is beneficial for users who wants to:
 - [Repository Structure](#repository-structure)
 - [Contributing](#contributing)
 - [License](#license)
+- [Citation](#citation)
 
 ## Installation
 ### Python
@@ -151,12 +152,12 @@ This project is licensed under the [MIT License](LICENSE).
 ## Citation
 If you use this code in your work, please cite it as follows:
 ```bibtex
-@misc{Guthikonda_Telugu_News_Articles_2024,
-  author = {Guthikonda, Surya},
-  title = {SFT LLM News Articles Telugu},
-  year = {2024},
-  publisher = {GitHub},
-  journal = {GitHub repository},
-  howpublished = {\url{https://github.com/SuryaKrishna02/sft-llm-news-articles-telugu}}
-}
+    @software{Guthikonda_SFT_LLM_News_2024,
+    author = {Guthikonda, Surya},
+    month = apr,
+    title = {{SFT LLM News Articles Telugu}},
+    url = {https://github.com/SuryaKrishna02/sft-llm-news-articles-telugu},
+    version = {1.0.0},
+    year = {2024}
+    }
 ```
