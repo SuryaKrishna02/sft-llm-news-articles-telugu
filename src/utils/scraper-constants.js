@@ -58,8 +58,8 @@ export const COMBINED_LINKS_FILE_NAME = "combined"
 export const RUN_CONTENT_SCRAPER = true
 export const CONTENT_SCRAPER_MAJOR_TIMEOUT = [1*60, 2*60, 3*60] // In Seconds
 export const CONTENT_SCRAPER_MINOR_TIMEOUT = [1, 5, 10] // In Seconds
-export const CONTENT_SCRAPER_BATCH_SIZE = 10//200;
-export const CONTENT_SCRAPER_MAJOR_TIMEOUT_LINKS = 40//50000;
+export const CONTENT_SCRAPER_BATCH_SIZE = 200;
+export const CONTENT_SCRAPER_MAJOR_TIMEOUT_LINKS = 50000;
 export const generateOutputJsonPath = (batchIndex) => `./src/data/content/tmp/batch_${batchIndex}.json`
 
 export const SCRAPED_CONTENT_FILE_PATH = "./src/data/content/scraped_content.json"
